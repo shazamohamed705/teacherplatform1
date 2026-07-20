@@ -107,8 +107,8 @@
   transform: translateY(0) scale(1);
 }
 .skillPill:hover {
-  background: color-mix(in srgb, var(--pill-color) 20%, transparent);
-  box-shadow: 0 0 20px color-mix(in srgb, var(--pill-color) 40%, transparent);
+  background: rgba(167, 139, 250, 0.2);
+  box-shadow: 0 0 20px rgba(167, 139, 250, 0.3);
   transform: translateY(-3px) scale(1.02);
 }
 

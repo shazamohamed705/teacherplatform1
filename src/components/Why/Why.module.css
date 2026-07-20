@@ -190,8 +190,8 @@
   width: 48px;
   height: 48px;
   border-radius: 12px;
-  background: color-mix(in srgb, var(--reason-color) 15%, transparent);
-  border: 1px solid color-mix(in srgb, var(--reason-color) 30%, transparent);
+  background: rgba(242, 101, 34, 0.15);
+  border: 1px solid rgba(242, 101, 34, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;

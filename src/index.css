@@ -21,8 +21,7 @@
 }
 
 [dir="rtl"] {
-  --font-main: 'Cairo', 'Tajawal', sans-serif;
-  font-family: var(--font-main);
+  font-family: 'Cairo', 'Tajawal', sans-serif;
   font-weight: 400;
 }
 
@@ -37,7 +36,6 @@
 [dir="rtl"] a,
 [dir="rtl"] li {
   font-weight: 400;
-}
 }
 
 html {
