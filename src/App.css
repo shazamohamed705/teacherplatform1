@@ -1,0 +1,4 @@
+/* App-level styles - component styles live in their own .module.css files */
+main {
+  flex: 1;
+}

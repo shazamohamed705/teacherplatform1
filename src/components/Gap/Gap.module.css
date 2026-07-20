@@ -1,0 +1,315 @@
+.section {
+  position: relative;
+  padding: 120px 5%;
+  background: linear-gradient(135deg, #2e2347 0%, #423366 45%, #5a3d7a 100%);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 60px;
+}
+
+/* ---- Header ---- */
+.header {
+  text-align: center;
+  max-width: 680px;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.header.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--orange);
+  background: rgba(242, 101, 34, 0.12);
+  border: 1px solid rgba(242, 101, 34, 0.3);
+  padding: 6px 18px;
+  border-radius: 50px;
+  margin-bottom: 20px;
+}
+
+.title {
+  font-size: clamp(30px, 5vw, 54px);
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.15;
+  margin: 0 0 16px;
+  letter-spacing: -1px;
+}
+
+.titleOrange {
+  color: var(--orange);
+  position: relative;
+}
+.titleOrange::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 0; right: 0;
+  height: 3px;
+  background: var(--orange);
+  border-radius: 2px;
+  opacity: 0.5;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.7;
+}
+
+/* ---- Split Screen ---- */
+.split {
+  display: grid;
+  grid-template-columns: 1fr 60px 1fr;
+  width: 100%;
+  max-width: 1100px;
+  min-height: 420px;
+  opacity: 0;
+  transform: scale(0.97);
+  transition: opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.4);
+}
+.split.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ---- Panes ---- */
+.leftPane,
+.rightPane {
+  position: relative;
+  padding: 48px 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.leftPane {
+  background: rgba(10, 8, 20, 0.85);
+}
+.rightPane {
+  background: rgba(46, 28, 16, 0.75);
+}
+
+.paneOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.leftPane .paneOverlay {
+  background: radial-gradient(circle at top right, rgba(66,51,102,0.3), transparent 60%);
+}
+.rightPane .paneOverlay {
+  background: radial-gradient(circle at top left, rgba(242,101,34,0.18), transparent 60%);
+}
+
+.paneContent {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Tag */
+.paneTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  width: fit-content;
+}
+.tagIconBad  { color: rgba(255,100,100,0.7); font-size: 14px; }
+.tagIconGood { color: var(--orange); font-size: 14px; }
+
+/* Title */
+.paneTitle {
+  font-size: clamp(20px, 2.5vw, 28px);
+  font-weight: 900;
+  color: rgba(255,255,255,0.9);
+  margin: 0;
+}
+
+.paneTitlePurple {
+  background: linear-gradient(90deg, #a78bfa, #7c3aed, #c4b5fd);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.paneTitleOrange {
+  color: var(--orange);
+}
+
+/* Desc */
+.paneDesc {
+  font-size: 14px;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.6;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  padding-top: 16px;
+  margin: 0;
+}
+
+/* Typewriter list */
+.twList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 140px;
+}
+
+.twItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.8);
+  line-height: 1.5;
+  min-height: 22px;
+}
+
+.twIconBad  { color: rgba(255,100,100,0.7); font-size: 14px; flex-shrink: 0; margin-top: 3px; }
+.twIconGood { color: var(--orange); font-size: 14px; flex-shrink: 0; margin-top: 3px; }
+
+/* blinking cursor */
+.cursor {
+  display: inline-block;
+  color: var(--orange);
+  font-weight: 300;
+  animation: blink 0.6s step-end infinite;
+  margin-right: 1px;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* ---- Center Divider ---- */
+.divider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.4);
+  gap: 0;
+  overflow: hidden;
+}
+
+.dividerLine {
+  width: 2px;
+  flex: 1;
+  background: linear-gradient(to bottom, transparent, rgba(242,101,34,0.5), transparent);
+  transform: scaleY(0);
+  transform-origin: center;
+  transition: transform 1.2s ease 0.4s;
+}
+.dividerLine.grow {
+  transform: scaleY(1);
+}
+
+.dividerBadge {
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--orange);
+  background: rgba(242,101,34,0.12);
+  border: 2px solid rgba(242,101,34,0.35);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: 0.5px;
+}
+
+/* ---- Bottom Banner ---- */
+.banner {
+  max-width: 680px;
+  text-align: center;
+  padding: 22px 40px;
+  background: linear-gradient(135deg, rgba(66,51,102,0.5), rgba(242,101,34,0.12));
+  border: 1px solid rgba(242,101,34,0.2);
+  border-radius: 16px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease 0.7s, transform 0.8s ease 0.7s;
+}
+.banner.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.bannerText {
+  font-size: 16px;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.7;
+}
+.bannerText strong {
+  color: #fff;
+}
+
+/* ---- RESPONSIVE ---- */
+@media (max-width: 860px) {
+  .split {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto 1fr;
+    min-height: unset;
+  }
+
+  .divider {
+    flex-direction: row;
+    padding: 0;
+    height: 52px;
+  }
+
+  .dividerLine {
+    flex: 1;
+    width: auto;
+    height: 2px;
+    transform: scaleX(0);
+    transform-origin: center;
+    background: linear-gradient(to right, transparent, rgba(242,101,34,0.5), transparent);
+    transition: transform 1.2s ease 0.4s;
+  }
+  .dividerLine.grow {
+    transform: scaleX(1);
+  }
+
+  .leftPane,
+  .rightPane {
+    padding: 36px 28px;
+  }
+}
+
+@media (max-width: 500px) {
+  .section {
+    padding: 80px 4%;
+    gap: 40px;
+  }
+
+  .banner {
+    padding: 18px 20px;
+  }
+
+  .twItem {
+    font-size: 14px;
+  }
+}
