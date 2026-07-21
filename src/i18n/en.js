@@ -15,7 +15,7 @@ export default {
     badge:      "We Amplify Doctors' Voices",
     greeting:   'Hello, We are',
     line1:      'WAHAJ',
-    line2:      'MEDIA',
+    line2:      'Agency',
     tag1:       '🎬 Medical Content',
     tag2:       '📱 Social Media',
     tag3:       '🩺 Med Students',

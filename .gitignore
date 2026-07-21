@@ -12,6 +12,13 @@ dist
 dist-ssr
 *.local
 
+# Large video files (too big for GitHub — host on Cloudinary/Drive)
+public/*.MOV
+public/*.mov
+public/*.mp4
+public/*.rar
+public/*.zip
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

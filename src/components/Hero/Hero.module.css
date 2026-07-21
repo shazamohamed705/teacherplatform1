@@ -681,7 +681,7 @@
   .container {
     grid-template-columns: 1fr;
     text-align: center;
-    gap: 48px;
+    gap: 40px;
     padding: 60px 5%;
   }
 
@@ -704,13 +704,20 @@
     justify-content: center;
   }
 
+  /* content first, image after */
+  .content {
+    order: 1;
+  }
+
   .imageWrapper {
-    order: -1;
+    order: 2;
+    margin-top: 0;
+    padding-top: 0;
   }
 
   .imageRing {
-    width: clamp(240px, 50vw, 340px);
-    height: clamp(240px, 50vw, 340px);
+    width: clamp(220px, 55vw, 320px);
+    height: clamp(220px, 55vw, 320px);
   }
 
   .floatCard1 {
@@ -725,21 +732,60 @@
 }
 
 @media (max-width: 480px) {
-  .name {
-    font-size: 32px;
+  .hero {
+    overflow-x: hidden;
   }
 
+  .container {
+    padding: 50px 4%;
+    gap: 32px;
+  }
+
+  .name {
+    font-size: 28px;
+    word-break: break-word;
+  }
+
+  /* Tags — wrap على سطرين بدل ما يخرجوا برا */
+  .titleLine {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .titleTag {
+    font-size: 13px;
+    padding: 5px 12px;
+    white-space: nowrap;
+  }
+
+  /* description مش بيخرج برا */
+  .description {
+    font-size: 14px;
+    word-break: break-word;
+    padding: 0 4px;
+  }
+
+  /* Stats في سطرين */
   .stats {
-    gap: 12px;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
   .statItem {
-    padding: 12px 16px;
-    min-width: 80px;
+    padding: 10px 12px;
+    min-width: 70px;
+    flex: 1 1 calc(50% - 8px);
+    max-width: calc(50% - 8px);
   }
 
   .statNumber {
-    font-size: 22px;
+    font-size: 20px;
+  }
+
+  .statLabel {
+    font-size: 10px;
   }
 
   .actions {
@@ -757,8 +803,17 @@
   .floatCard {
     display: none;
   }
+
+  .badge {
+    font-size: 12px;
+  }
+
+  .social {
+    justify-content: center;
+  }
 }
 
 .nameHighlight {
   display: block;
+  font-size: clamp(24px, 5vw, 52px);
 }

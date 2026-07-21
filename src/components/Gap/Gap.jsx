@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaTimesCircle, FaCheckCircle } from 'react-icons/fa';
 import styles from './Gap.module.css';
@@ -9,6 +9,18 @@ function useTypewriter(lines, inView, key) {
   const [currentChar, setCurrentChar] = useState(0);
   const [done, setDone] = useState(false);
 
+  // Store lines in a ref so changes to the array reference don't trigger the effect
+  const linesRef = useRef(lines);
+  useEffect(() => { linesRef.current = lines; }, [lines]);
+
+  // Reset whenever key changes (new inView cycle or language change)
+  useEffect(() => {
+    setDisplayed([]);
+    setCurrentLine(0);
+    setCurrentChar(0);
+    setDone(false);
+  }, [key]);
+
   useEffect(() => {
     if (!inView) {
       setDisplayed([]);
@@ -18,6 +30,7 @@ function useTypewriter(lines, inView, key) {
       return;
     }
     if (done) return;
+    const lines = linesRef.current;
     if (currentLine >= lines.length) { setDone(true); return; }
     const line = lines[currentLine];
     if (currentChar < line.length) {
@@ -34,7 +47,7 @@ function useTypewriter(lines, inView, key) {
       const t = setTimeout(() => { setCurrentLine(l => l + 1); setCurrentChar(0); }, 300);
       return () => clearTimeout(t);
     }
-  }, [inView, currentLine, currentChar, done, lines, key]);
+  }, [inView, currentLine, currentChar, done, key]);
 
   return displayed;
 }
@@ -61,12 +74,14 @@ export default function Gap() {
   const sectionRef = useRef(null);
   const { inView, key } = useInView(sectionRef);
 
-  const problemLines = [
+  // useMemo prevents new array references on every render, which would
+  // cause the useTypewriter effect to re-run in an infinite loop.
+  const problemLines = useMemo(() => [
     t('gap.prob1'), t('gap.prob2'), t('gap.prob3'), t('gap.prob4'),
-  ];
-  const solutionLines = [
+  ], [t]);
+  const solutionLines = useMemo(() => [
     t('gap.sol1'), t('gap.sol2'), t('gap.sol3'), t('gap.sol4'),
-  ];
+  ], [t]);
 
   const problemDisplayed  = useTypewriter(problemLines,  inView, `${key}-${i18n.language}`);
   const solutionDisplayed = useTypewriter(solutionLines, inView, `s-${key}-${i18n.language}`);

@@ -146,8 +146,8 @@ export default function Hero() {
             {/* Main circle */}
             <div className={styles.imageCircle}>
               <img
-                src="/Variations  V2.0 1.png"
-                alt="Doctor's Photo"
+                src="/Asset 5@4x.png"
+                alt="WAHAJ MEDIA"
                 className={styles.doctorImg}
               />
             </div>
