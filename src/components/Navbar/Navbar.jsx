@@ -10,6 +10,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [active,   setActive]   = useState('hero');
   const [langOpen, setLangOpen] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const isAr = i18n.language === 'ar';
   const langRef = useRef(null);
 
@@ -122,9 +123,9 @@ export default function Navbar() {
           </div>
 
           {/* CTA */}
-          <a href="#contact" className={styles.ctaBtn}>
+          <button className={styles.ctaBtn} onClick={() => setShowModal(true)}>
             {t('nav.getStarted')}
-          </a>
+          </button>
         </div>
 
         {/* Hamburger */}
@@ -156,10 +157,41 @@ export default function Navbar() {
             {isAr ? '🇬🇧 Switch to English' : '🇸🇦 التبديل للعربية'}
           </button>
         </div>
-        <a href="#contact" className={styles.mobileCta} onClick={handleLinkClick}>
+        <button className={styles.mobileCta} onClick={() => { handleLinkClick(); setShowModal(true); }}>
           {t('nav.getStarted')}
-        </a>
+        </button>
       </div>
+
+      {/* Contact Modal */}
+      {showModal && (
+        <div className={styles.modalBackdrop} onClick={() => setShowModal(false)}>
+          <div className={styles.modal} onClick={e => e.stopPropagation()}>
+            <button className={styles.modalClose} onClick={() => setShowModal(false)}>✕</button>
+            <h3 className={styles.modalTitle}>تواصل معنا</h3>
+            <p className={styles.modalSub}>اختار طريقة التواصل المفضلة</p>
+            <div className={styles.modalBtns}>
+              <a
+                href="https://wa.me/201023313853"
+                target="_blank"
+                rel="noreferrer"
+                className={`${styles.modalBtn} ${styles.modalBtnWa}`}
+                onClick={() => setShowModal(false)}
+              >
+                <span>💬</span>
+                WhatsApp
+              </a>
+              <a
+                href="mailto:Wahaj.official.2025@gmail.com"
+                className={`${styles.modalBtn} ${styles.modalBtnGmail}`}
+                onClick={() => setShowModal(false)}
+              >
+                <span>✉️</span>
+                Gmail
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

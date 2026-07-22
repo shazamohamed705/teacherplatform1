@@ -45,6 +45,7 @@ function StatItem({ number, suffix = '+', label, animate, index = 0 }) {
 export default function Hero() {
   const heroRef = useRef(null);
   const [animate, setAnimate] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -115,10 +116,13 @@ export default function Hero() {
 
           {/* CTA */}
           <div className={styles.actions}>
-            <a href="#contact" className={styles.btnPrimary}>
+            <button
+              className={styles.btnPrimary}
+              onClick={() => setShowModal(true)}
+            >
               {t('hero.cta1')}
               <span className={styles.btnIcon}>→</span>
-            </a>
+            </button>
             <a href="#portfolio" className={styles.btnSecondary}>
               {t('hero.cta2')}
               <span className={styles.btnIcon}>→</span>
