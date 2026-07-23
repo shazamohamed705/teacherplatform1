@@ -31,7 +31,7 @@
   height: 68px;
   width: auto;
   object-fit: contain;
-  filter: brightness(0) invert(1);
+  mix-blend-mode: screen;
   transition: transform 0.3s ease;
 }
 

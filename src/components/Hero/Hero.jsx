@@ -123,7 +123,11 @@ export default function Hero() {
               {t('hero.cta1')}
               <span className={styles.btnIcon}>→</span>
             </button>
-            <a href="#portfolio" className={styles.btnSecondary}>
+            <a
+              href="#portfolio"
+              className={styles.btnSecondary}
+              onClick={e => { e.preventDefault(); document.getElementById('portfolio')?.scrollIntoView({ behavior: 'smooth' }); }}
+            >
               {t('hero.cta2')}
               <span className={styles.btnIcon}>→</span>
             </a>
@@ -189,6 +193,35 @@ export default function Hero() {
           <div className={styles.scrollWheel} />
         </div>
       </div>
+
+      {/* Contact Modal */}
+      {showModal && (
+        <div className={styles.modalBackdrop} onClick={() => setShowModal(false)}>
+          <div className={styles.modal} onClick={e => e.stopPropagation()}>
+            <button className={styles.modalClose} onClick={() => setShowModal(false)}>✕</button>
+            <h3 className={styles.modalTitle}>تواصل معنا</h3>
+            <p className={styles.modalSub}>اختار طريقة التواصل المفضلة</p>
+            <div className={styles.modalBtns}>
+              <a
+                href="https://wa.me/201023313853"
+                target="_blank"
+                rel="noreferrer"
+                className={`${styles.modalBtn} ${styles.modalBtnWa}`}
+                onClick={() => setShowModal(false)}
+              >
+                <span>💬</span> WhatsApp
+              </a>
+              <a
+                href="mailto:Wahaj.official.2025@gmail.com"
+                className={`${styles.modalBtn} ${styles.modalBtnGmail}`}
+                onClick={() => setShowModal(false)}
+              >
+                <span>✉️</span> Gmail
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
 
     </section>
   );

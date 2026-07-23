@@ -70,7 +70,7 @@ export default function Navbar() {
         {/* Logo */}
         <a href="#hero" className={styles.logo}>
           <img
-            src="/Screenshot_2026-07-19_224553-removebg-preview.png"
+            src="/Asset 25@4x.png"
             alt="WAHAJ MEDIA"
             className={styles.logoImg}
           />

@@ -5,7 +5,7 @@ import styles from './Doctors.module.css';
 const doctors = [
   {
     id: 'hany',
-    name: 'Dr. Mohamed Hany',
+    name: 'Dr. mohamed hanafy',
     specialty: 'Medical Content Creator',
     items: [
       { id: 1,  type: 'image', src: '/2.1.png',          title: 'Campaign 01', size: 'large' },
@@ -41,7 +41,7 @@ const doctors = [
   },
   {
     id: 'mona',
-    name: 'Dr. Mona Kuwait',
+    name: 'Dr.mona Kotait ',
     specialty: 'ENT Specialist',
     items: [
       { id: 1,  type: 'image', src: 'https://res.cloudinary.com/ofmkb97h/image/upload/v1784747971/Copy_of_%D8%B6%D8%B9%D9%81_%D8%A7%D9%84%D8%B3%D9%85%D8%B9_%D9%88%D8%A7%D9%84%D8%AE%D8%B7%D9%88%D8%B1%D8%A9_%D8%B9%D9%84%D9%89_%D8%A7%D9%84%D8%AD%D9%8A%D8%A7%D8%A9_h5m057.jpg', title: 'Campaign 01', size: 'large' },
@@ -99,7 +99,7 @@ function useInView(ref) {
   return inView;
 }
 
-function VideoItem({ item, isLarge }) {
+function VideoItem({ item, isLarge, onOpen }) {
   const vidRef  = useRef(null);
   const [playing, setPlaying] = useState(false);
   const [muted,   setMuted]   = useState(true);
@@ -123,7 +123,7 @@ function VideoItem({ item, isLarge }) {
   return (
     <div
       className={`${styles.card} ${isLarge ? styles.cardLarge : ''}`}
-      onClick={toggle}
+      onClick={() => onOpen(item)}
     >
       {item.src && (
         <video
@@ -137,11 +137,9 @@ function VideoItem({ item, isLarge }) {
         />
       )}
 
-      {/* play/pause overlay */}
-      <div className={`${styles.cardOverlay} ${playing ? styles.overlayPlaying : ''}`}>
-        <div className={styles.overlayIcon}>
-          {playing ? <FaPause /> : <FaPlay />}
-        </div>
+      {/* play overlay */}
+      <div className={styles.cardOverlay}>
+        <div className={styles.overlayIcon}><FaPlay /></div>
       </div>
 
       {/* bottom bar */}
@@ -149,59 +147,29 @@ function VideoItem({ item, isLarge }) {
         <span className={styles.cardTag}>🎬 Reel</span>
         <div className={styles.cardInfoRow}>
           <span className={styles.cardTitle}>{item.title}</span>
-          <button className={styles.muteBtn} onClick={toggleMute}>
-            {muted ? <FaVolumeMute /> : <FaVolumeUp />}
-          </button>
         </div>
       </div>
     </div>
   );
 }
 
-function PromoItem({ item }) {
-  const vidRef  = useRef(null);
-  const [playing, setPlaying] = useState(false);
-  const [muted,   setMuted]   = useState(true);
-
-  const toggle = (e) => {
-    e.stopPropagation();
-    const v = vidRef.current;
-    if (!v) return;
-    if (playing) { v.pause(); setPlaying(false); }
-    else         { v.play();  setPlaying(true);  }
-  };
-
-  const toggleMute = (e) => {
-    e.stopPropagation();
-    const v = vidRef.current;
-    if (!v) return;
-    v.muted = !muted;
-    setMuted(!muted);
-  };
-
+function PromoItem({ item, onOpen }) {
   return (
-    <div className={styles.promoCard} onClick={toggle}>
+    <div className={styles.promoCard} onClick={() => onOpen(item)}>
       <video
-        ref={vidRef}
         src={`${item.src}#t=0.5`}
         className={styles.promoVideo}
-        muted={muted}
-        loop
+        muted
         playsInline
         preload="metadata"
       />
-      <div className={`${styles.cardOverlay} ${playing ? styles.overlayPlaying : ''}`}>
-        <div className={styles.overlayIcon}>
-          {playing ? <FaPause /> : <FaPlay />}
-        </div>
+      <div className={styles.cardOverlay}>
+        <div className={styles.overlayIcon}><FaPlay /></div>
       </div>
       <div className={styles.cardInfo}>
         <span className={styles.cardTag}>🎬 Promo</span>
         <div className={styles.cardInfoRow}>
           <span className={styles.cardTitle}>{item.title}</span>
-          <button className={styles.muteBtn} onClick={toggleMute}>
-            {muted ? <FaVolumeMute /> : <FaVolumeUp />}
-          </button>
         </div>
       </div>
     </div>
@@ -212,9 +180,40 @@ export default function Doctors() {
   const sectionRef  = useRef(null);
   const inView      = useInView(sectionRef);
   const [activeDoc, setActiveDoc] = useState(0);
-  const [lightbox,  setLightbox]  = useState(null); // { type, src }
+  const [lightbox,  setLightbox]  = useState(null);
+  const [videoLightbox, setVideoLightbox] = useState(null); // { index in videoItems }
 
   const doctor = doctors[activeDoc];
+
+  // كل الفيديوهات في الـ doctor الحالي
+  const videoItems = doctor.items.filter(i => i.type === 'video' || i.type === 'promo');
+
+  const openVideo = (item) => {
+    const idx = videoItems.findIndex(v => v.id === item.id);
+    setVideoLightbox(idx);
+  };
+
+  const prevVideo = (e) => {
+    e.stopPropagation();
+    setVideoLightbox(i => (i - 1 + videoItems.length) % videoItems.length);
+  };
+
+  const nextVideo = (e) => {
+    e.stopPropagation();
+    setVideoLightbox(i => (i + 1) % videoItems.length);
+  };
+
+  // keyboard navigation
+  useEffect(() => {
+    const onKey = (e) => {
+      if (videoLightbox === null) return;
+      if (e.key === 'ArrowLeft')  setVideoLightbox(i => (i - 1 + videoItems.length) % videoItems.length);
+      if (e.key === 'ArrowRight') setVideoLightbox(i => (i + 1) % videoItems.length);
+      if (e.key === 'Escape')     setVideoLightbox(null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [videoLightbox, videoItems.length]);
 
   return (
     <section id="doctors" className={styles.section} ref={sectionRef}>
@@ -249,7 +248,7 @@ export default function Doctors() {
       <div className={`${styles.grid} ${inView ? styles.visible : ''}`}>
         {doctor.items.map((item, i) => {
           if (item.type === 'promo') {
-            return <PromoItem key={item.id} item={item} />;
+            return <PromoItem key={item.id} item={item} onOpen={openVideo} />;
           }
           if (item.type === 'video') {
             return (
@@ -257,6 +256,7 @@ export default function Doctors() {
                 key={item.id}
                 item={item}
                 isLarge={item.size === 'large'}
+                onOpen={openVideo}
               />
             );
           }
@@ -280,12 +280,45 @@ export default function Doctors() {
         })}
       </div>
 
-      {/* Lightbox for images only */}
+      {/* Image Lightbox */}
       {lightbox && (
         <div className={styles.lightbox} onClick={() => setLightbox(null)}>
           <div className={styles.lightboxInner} onClick={e => e.stopPropagation()}>
             <button className={styles.lightboxClose} onClick={() => setLightbox(null)}>✕</button>
             <img src={lightbox.src} alt={lightbox.title} className={styles.lightboxImg} />
+          </div>
+        </div>
+      )}
+
+      {/* Video Lightbox */}
+      {videoLightbox !== null && (
+        <div className={styles.videoLightbox} onClick={() => setVideoLightbox(null)}>
+          <div className={styles.videoLightboxInner} onClick={e => e.stopPropagation()}>
+
+            <button className={styles.lightboxClose} onClick={() => setVideoLightbox(null)}>✕</button>
+
+            {/* prev */}
+            {videoItems.length > 1 && (
+              <button className={`${styles.navBtn} ${styles.navPrev}`} onClick={prevVideo}>‹</button>
+            )}
+
+            <video
+              key={videoItems[videoLightbox]?.src}
+              src={videoItems[videoLightbox]?.src}
+              className={styles.lightboxVideo}
+              controls
+              autoPlay
+              playsInline
+            />
+
+            {/* next */}
+            {videoItems.length > 1 && (
+              <button className={`${styles.navBtn} ${styles.navNext}`} onClick={nextVideo}>›</button>
+            )}
+
+            <p className={styles.videoCounter}>
+              {videoLightbox + 1} / {videoItems.length}
+            </p>
           </div>
         </div>
       )}
