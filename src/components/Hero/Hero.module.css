@@ -535,9 +535,11 @@
   width: 88%;
   height: 88%;
   object-fit: contain;
-  object-position: center;
-  margin: auto;
-  margin-top: 30px;
+  object-position: center center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .imagePlaceholder {
