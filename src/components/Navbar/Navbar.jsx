@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from './Navbar.module.css';
 
-const sectionIds = ['hero','story','about','why','process','portfolio'];
+const sectionIds = ['hero','story','about','why','process','portfolio','team'];
 
 export default function Navbar() {
   const { t, i18n } = useTranslation();
@@ -21,6 +21,7 @@ export default function Navbar() {
     { label: t('nav.whyUs'),     href: '#why' },
     { label: t('nav.process'),   href: '#process' },
     { label: t('nav.work'),      href: '#portfolio' },
+    { label: t('nav.team'),      href: '#team' },
   ];
 
   useEffect(() => {

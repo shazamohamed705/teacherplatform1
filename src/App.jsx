@@ -7,6 +7,7 @@ import Why from './components/Why/Why';
 import Process from './components/Process/Process';
 import Portfolio from './components/Portfolio/Portfolio';
 import Doctors from './components/Doctors/Doctors';
+import Team from './components/Team/Team';
 import Footer from './components/Footer/Footer';
 import Cursor from './components/Cursor/Cursor';
 import './App.css';
@@ -25,6 +26,7 @@ function App() {
         <Process />
         <Portfolio />
         <Doctors />
+        <Team />
       </main>
       <Footer />
     </>

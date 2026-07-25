@@ -7,6 +7,7 @@ export default {
     whyUs:     'Why Us',
     process:   'Process',
     work:      'Work',
+    team:      'Team',
     getStarted:'Get Started',
   },
 
@@ -123,6 +124,19 @@ export default {
     s3Desc: 'We translate everything into a digital presence and a social media strategy — defining exactly how, when, and what to communicate.',
     s4Sub:  'Bring It to Life',   s4Title: 'Creative Direction',
     s4Desc: 'Finally, we turn words into visuals — Creative Direction, Content, Videography, and Design. All planned, nothing random.',
+  },
+
+  // Team
+  team: {
+    eyebrow:  'Meet The Team',
+    title1:   'The People Who Make',
+    titleSpk: ' The Magic Happen',
+    subtitle: 'A specialized team of creatives working side by side to build your digital presence.',
+    members: [
+      { name: 'Ahmed Elgazar', role: 'Chief Executive Officer' },
+      { name: 'Atef Khalil',   role: 'Chief Creative Officer'  },
+      { name: 'Omar Nour',     role: 'Chief PR Officer'        },
+    ],
   },
 
   // Portfolio
