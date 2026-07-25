@@ -5,24 +5,24 @@ import styles from './Team.module.css';
 const membersMeta = [
   {
     id: 1,
-    name: 'Atef Khalil',
-    role: 'CCO (Chief Creative Officer)',
-    img: '/WhatsApp Image 2026-07-25 at 8.06.40 PM.jpeg',
-    color: '#a78bfa',
-  },
-  {
-    id: 2,
     name: 'Ahmed Elgazar',
     role: 'Chief Executive Officer',
     img: '/WhatsApp Image 2026-07-25 at 8.11.08 PM.jpeg',
     color: '#f26522',
   },
   {
-    id: 3,
+    id: 2,
     name: 'Omar Nour',
     role: 'CPRO',
     img: '/WhatsApp Image 2026-07-25 at 8.11.16 PM.jpeg',
     color: '#f26522',
+  },
+  {
+    id: 3,
+    name: 'Atef Khalil',
+    role: 'CCO (Chief Creative Officer)',
+    img: '/WhatsApp Image 2026-07-25 at 8.06.40 PM.jpeg',
+    color: '#a78bfa',
   },
 ];
 
