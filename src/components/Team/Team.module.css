@@ -240,3 +240,167 @@
   .cards { gap: 20px; }
   .card { width: 100%; max-width: 320px; }
 }
+
+/* ── role row ── */
+.roleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.short {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--c, #f26522);
+}
+.divider {
+  color: rgba(255,255,255,0.2);
+  font-size: 14px;
+}
+.role {
+  font-size: 13px;
+  color: rgba(255,255,255,0.45);
+  font-weight: 500;
+}
+
+/* ── photo hover ── */
+.photoHover {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  cursor: pointer;
+}
+.photoWrap:hover .photoHover { opacity: 1; }
+.photoHoverIcon {
+  font-size: 36px;
+  color: #fff;
+}
+
+/* ── Popup backdrop ── */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ── Popup box ── */
+.popup {
+  position: relative;
+  background: linear-gradient(145deg, #2a1f45, #3d2e5e);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 28px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.6),
+              0 0 0 1px color-mix(in srgb, var(--c) 30%, transparent);
+  animation: popIn 0.3s ease;
+}
+@keyframes popIn {
+  from { transform: scale(0.88) translateY(20px); opacity: 0; }
+  to   { transform: scale(1)    translateY(0);    opacity: 1; }
+}
+
+.popupClose {
+  position: absolute;
+  top: 14px; right: 14px;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #fff;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1;
+  transition: background 0.2s;
+}
+.popupClose:hover { background: var(--c, #f26522); }
+
+.popupPhoto {
+  width: 100%;
+  height: 280px;
+  overflow: hidden;
+}
+.popupPhoto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  transform: scale(1.08);
+}
+
+.popupInfo {
+  padding: 24px 28px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.popupName {
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+}
+
+.popupRoleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.popupShort {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--c, #f26522);
+}
+.popupDivider {
+  color: rgba(255,255,255,0.2);
+}
+.popupRole {
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+}
+
+.fbBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 12px 28px;
+  background: #1877F2;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 50px;
+  box-shadow: 0 6px 20px rgba(24,119,242,0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.fbBtn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(24,119,242,0.55);
+}
