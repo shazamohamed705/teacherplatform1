@@ -1,0 +1,103 @@
+.panel {
+  position: relative;
+  width: min(460px, 92vw);
+  padding: 46px 40px 38px;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+/* Classic inset double frame */
+.panel::before {
+  content: '';
+  position: absolute;
+  inset: 10px;
+  border: 1px solid var(--line);
+  pointer-events: none;
+}
+
+.title {
+  margin: 16px 0 8px;
+  font-size: clamp(36px, 6vw, 48px);
+}
+
+.sub {
+  margin-bottom: 28px;
+  color: var(--fg-muted);
+}
+
+.rows {
+  position: relative;
+}
+
+.row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 4px;
+  border-top: 1px solid var(--line);
+  transition: padding 0.5s var(--ease-out);
+}
+
+.row:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.row::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--bg-alt);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.5s var(--ease-out);
+}
+
+.row > * {
+  position: relative;
+}
+
+.row:hover {
+  padding-inline: 14px;
+}
+
+.row:hover::before {
+  transform: scaleY(1);
+}
+
+.row:hover :global(.arrow) {
+  translate: 4px 0;
+}
+
+[dir="rtl"] .row:hover :global(.arrow) {
+  translate: -4px 0;
+}
+
+.icon {
+  font-size: 28px;
+}
+
+.wa   { color: #3DD47F; }
+.mail { color: var(--accent); }
+
+.text b {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.text small {
+  display: block;
+  font-size: 13px;
+  color: var(--fg-muted);
+  word-break: break-all;
+}
+
+@media (max-width: 480px) {
+  .panel {
+    padding: 40px 24px 30px;
+  }
+}

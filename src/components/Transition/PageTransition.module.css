@@ -1,0 +1,198 @@
+.wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 8900;
+  cursor: progress;
+}
+
+/* Orange leads in and trails out; purple sits on top.
+   The variant class on .wrap only swaps the keyframes. */
+.panel {
+  position: absolute;
+  inset: 0;
+  animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.iris .panel,
+.split .panel {
+  will-change: clip-path;
+}
+
+.rise .panel,
+.side .panel,
+.skew .panel {
+  will-change: transform;
+}
+
+.orange {
+  background: var(--orange);
+  animation-duration: 0.55s, 0.6s;
+  animation-delay: 0s, 1.08s;
+  animation-fill-mode: both, forwards;
+}
+
+.purple {
+  background: var(--purple-deep);
+  animation-duration: 0.55s, 0.6s;
+  animation-delay: 0.12s, 0.95s;
+  animation-fill-mode: both, forwards;
+}
+
+/* 1 — rise from below, leave through the top */
+.rise .panel { animation-name: riseIn, riseOut; }
+
+@keyframes riseIn  { from { transform: translateY(100%); } to { transform: none; } }
+@keyframes riseOut { from { transform: none; } to { transform: translateY(-100%); } }
+
+/* 2 — iris opening from where you clicked, closing to the centre */
+.iris .panel { animation-name: irisIn, irisOut; }
+
+@keyframes irisIn {
+  from { clip-path: circle(0 at var(--cx) var(--cy)); }
+  to   { clip-path: circle(150vmax at var(--cx) var(--cy)); }
+}
+@keyframes irisOut {
+  from { clip-path: circle(150vmax at 50% 50%); }
+  to   { clip-path: circle(0 at 50% 50%); }
+}
+
+/* 3 — sweep across from the side */
+.side .panel { animation-name: sideIn, sideOut; }
+
+@keyframes sideIn  { from { transform: translateX(-100%); } to { transform: none; } }
+@keyframes sideOut { from { transform: none; } to { transform: translateX(100%); } }
+
+/* 4 — split open from the centre, fold away top-and-bottom */
+.split .panel { animation-name: splitIn, splitOut; }
+
+@keyframes splitIn  { from { clip-path: inset(0 50% 0 50%); } to { clip-path: inset(0 0 0 0); } }
+@keyframes splitOut { from { clip-path: inset(0 0 0 0); } to { clip-path: inset(50% 0 50% 0); } }
+
+/* 5 — slanted boards */
+.skew .panel { animation-name: skewIn, skewOut; }
+
+@keyframes skewIn  { from { transform: translateY(115%) skewY(-10deg); } to { transform: none; } }
+@keyframes skewOut { from { transform: none; } to { transform: translateY(-115%) skewY(10deg); } }
+
+/* ---- Label ---- */
+.label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding-inline: 24px;
+  text-align: center;
+  color: var(--cream);
+  animation:
+    labelIn 0.3s ease 0.28s both,
+    labelOut 0.35s var(--ease) 0.92s forwards;
+}
+
+@keyframes labelIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes labelOut {
+  to { opacity: 0; transform: translateY(-24px); }
+}
+
+.mark {
+  width: 34px;
+  height: auto;
+  clip-path: inset(100% 0 0 0);
+  animation: reveal 0.7s var(--ease-out) 0.3s forwards;
+}
+
+@keyframes reveal {
+  to { clip-path: inset(0 0 0 0); }
+}
+
+.num {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-style: italic;
+  color: var(--orange);
+}
+
+.name {
+  display: block;
+  overflow: hidden;
+  padding-block: 0.1em;
+  font-family: var(--font-display);
+  font-size: clamp(40px, 7vw, 88px);
+  line-height: 1.1;
+}
+
+.name span {
+  display: inline-block;
+  transform: translateY(110%);
+  animation: rise 0.75s var(--ease-out) 0.38s forwards;
+}
+
+@keyframes rise {
+  to { transform: none; }
+}
+
+.line {
+  position: relative;
+  width: 120px;
+  height: 1px;
+  overflow: hidden;
+  background: rgba(244, 238, 228, 0.2);
+}
+
+.line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--orange);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: grow 0.8s var(--ease) 0.3s forwards;
+}
+
+[dir="rtl"] .line::after {
+  transform-origin: right;
+}
+
+@keyframes grow {
+  to { transform: scaleX(1); }
+}
+
+.lite .orange,
+.lite .purple {
+  animation-duration: 0.34s, 0.38s;
+}
+
+.lite .orange {
+  animation-delay: 0s, 0.52s;
+}
+
+.lite .purple {
+  animation-delay: 0.08s, 0.46s;
+}
+
+.lite .label {
+  animation:
+    labelIn 0.22s ease 0.16s both,
+    labelOut 0.24s var(--ease) 0.48s forwards;
+}
+
+.lite .mark {
+  animation-duration: 0.4s;
+  animation-delay: 0.16s;
+}
+
+.lite .name span {
+  animation-duration: 0.45s;
+  animation-delay: 0.2s;
+}
+
+.lite .line::after {
+  animation-duration: 0.45s;
+  animation-delay: 0.16s;
+}

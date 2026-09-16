@@ -5,50 +5,133 @@
 }
 
 :root {
-  --purple: #423366;
+  /* Brand */
+  --purple:        #423366;
+  --purple-deep:   #2E2347;
+  --purple-darker: #211A34;
+  --purple-soft:   #5A4580;
+  --orange:        #F26522;
+  --orange-deep:   #D4551A;
+  --orange-light:  #FF8C4B;
+  --cream:         #F4EEE4;
+  --cream-2:       #EBE2D4;
+  --cream-muted:   rgba(244, 238, 228, 0.64);
+  --cream-line:    rgba(244, 238, 228, 0.14);
+
+  /* Theme tokens — default is deep purple ground, cream type, orange accent.
+     Sections switch palette with the .theme-* classes below. */
+  --bg:        var(--purple-deep);
+  --bg-alt:    var(--purple);
+  --fg:        var(--cream);
+  --fg-2:      rgba(244, 238, 228, 0.82);
+  --fg-muted:  rgba(244, 238, 228, 0.62);
+  --line:      rgba(244, 238, 228, 0.14);
+  --accent:    var(--orange);
+  --on-accent: #fff;
+
+  /* Legacy aliases (kept for any older module still referencing them) */
+  --plum: var(--purple-deep);
   --purple-dark: #2e2347;
-  --purple-light: #5a4580;
-  --purple-xlight: #f0edf8;
-  --orange: #f26522;
   --orange-dark: #d4551a;
-  --orange-light: #ff8c4b;
   --white: #ffffff;
-  --gray-100: #f8f7fc;
-  --gray-200: #ede9f7;
   --gray-600: #6b6375;
   --gray-800: #2d2540;
-  --font-main: 'Cairo', 'Tajawal', sans-serif;
+
+  --font-display: 'Playfair Display', 'Amiri', Georgia, 'Times New Roman', serif;
+  --font-body: 'IBM Plex Sans Arabic', 'Helvetica Neue', Arial, sans-serif;
+  --font-main: var(--font-body);
+
+  --ease: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --container: 1240px;
+  --pad: clamp(20px, 5vw, 56px);
+  --nav-h: 76px;
 }
 
-[dir="rtl"] {
-  font-family: 'Cairo', 'Tajawal', sans-serif;
-  font-weight: 400;
+/* ================= Section palettes ================= */
+.theme-deep,
+.theme-purple,
+.theme-orange,
+.theme-cream {
+  background-color: var(--bg);
+  color: var(--fg);
 }
 
-[dir="rtl"] h1,
-[dir="rtl"] h2,
-[dir="rtl"] h3 {
-  font-weight: 700;
+.theme-deep {
+  --bg: var(--purple-deep);
+  --bg-alt: var(--purple);
 }
 
-[dir="rtl"] p,
-[dir="rtl"] span,
-[dir="rtl"] a,
-[dir="rtl"] li {
-  font-weight: 400;
+.theme-purple {
+  --bg: var(--purple);
+  --bg-alt: var(--purple-deep);
+}
+
+.theme-orange {
+  --bg: var(--orange);
+  --bg-alt: var(--orange-deep);
+  --fg: var(--purple-deep);
+  --fg-2: rgba(46, 35, 71, 0.86);
+  --fg-muted: rgba(46, 35, 71, 0.72);
+  --line: rgba(46, 35, 71, 0.22);
+  --accent: var(--cream);
+  --on-accent: var(--purple-deep);
+}
+
+/* Cream is used sparingly — a single light section for contrast */
+.theme-cream {
+  --bg: var(--cream);
+  --bg-alt: var(--cream-2);
+  --fg: var(--purple-deep);
+  --fg-2: #4A3F5E;
+  --fg-muted: #6E6480;
+  --line: rgba(46, 35, 71, 0.15);
+  --accent: var(--orange);
+  --on-accent: #fff;
 }
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: var(--nav-h);
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  font-family: var(--font-main);
-  background: var(--white);
-  color: var(--gray-800);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.7;
+  background: var(--bg);
+  color: var(--fg);
   overflow-x: hidden;
+  /* clip (not hidden) so body never becomes a scroll container — sticky sections depend on it */
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+[dir="rtl"] body {
+  line-height: 1.9;
+}
+
+/* Static tiled grain — a live SVG turbulence filter was painting every frame */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image:
+    repeating-radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.18) 0 0.6px, transparent 0.8px 3px),
+    repeating-radial-gradient(circle at 70% 65%, rgba(0, 0, 0, 0.16) 0 0.5px, transparent 0.7px 4px);
+  background-size: 160px 160px, 120px 120px;
+}
+
+::selection {
+  background: var(--accent);
+  color: #fff;
 }
 
 #root {
@@ -57,7 +140,7 @@ body {
   flex-direction: column;
 }
 
-img {
+img, video {
   max-width: 100%;
   display: block;
 }
@@ -67,7 +150,7 @@ a {
   color: inherit;
 }
 
-ul {
+ul, ol {
   list-style: none;
 }
 
@@ -75,5 +158,375 @@ button {
   cursor: pointer;
   border: none;
   background: none;
-  font-family: var(--font-main);
+  color: inherit;
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ================= Layout ================= */
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--pad);
+}
+
+/* ================= Type ================= */
+.display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+}
+
+.display em {
+  font-style: italic;
+  font-weight: inherit;
+  color: var(--accent);
+}
+
+[dir="rtl"] .display {
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
+
+[dir="rtl"] .display em {
+  font-style: normal;
+}
+
+/* Section label:  01 ——— Our Story */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.eyebrow__num {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 16px;
+  letter-spacing: 0;
+  color: currentColor;
+}
+
+.eyebrow__line {
+  width: 36px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+[dir="rtl"] .eyebrow {
+  letter-spacing: 0;
+  font-size: 14px;
+}
+
+.rule {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: var(--line);
+}
+
+/* ================= Buttons ================= */
+.btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 17px 30px;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fg);
+  border: 1px solid var(--fg);
+  transition: color 0.5s var(--ease-out), border-color 0.5s var(--ease-out);
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--btn-fill, var(--accent));
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.55s var(--ease-out);
+}
+
+.btn:hover {
+  color: var(--btn-fill-fg, var(--on-accent));
+  border-color: var(--btn-fill, var(--accent));
+}
+
+.btn:hover::before {
+  transform: scaleY(1);
+}
+
+.btn:hover .arrow {
+  translate: 4px 0;
+}
+
+[dir="rtl"] .btn:hover .arrow {
+  translate: -4px 0;
+}
+
+/* Filled accent button; hover wipes in the section's text colour */
+.btn--solid {
+  --btn-fill: var(--fg);
+  --btn-fill-fg: var(--bg);
+  background: var(--accent);
+  color: var(--on-accent);
+  border-color: var(--accent);
+}
+
+.btn--sm {
+  padding: 12px 20px;
+  font-size: 11.5px;
+}
+
+[dir="rtl"] .btn {
+  letter-spacing: 0;
+  font-size: 15px;
+}
+
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding-block: 8px;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 100% 1px;
+  transition: background-size 0.6s var(--ease-out);
+}
+
+.link-arrow:hover {
+  background-size: 0 1px;
+  background-position: 100% 100%;
+}
+
+.link-arrow:hover .arrow {
+  translate: 4px 0;
+}
+
+[dir="rtl"] .link-arrow {
+  letter-spacing: 0;
+  font-size: 15px;
+  background-position: 100% 100%;
+}
+
+[dir="rtl"] .link-arrow:hover {
+  background-position: 0 100%;
+}
+
+[dir="rtl"] .link-arrow:hover .arrow {
+  translate: -4px 0;
+}
+
+.arrow {
+  flex-shrink: 0;
+  transition: translate 0.5s var(--ease-out);
+}
+
+.arrow--left,
+.arrow--back {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .arrow--auto {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .arrow--back {
+  transform: none;
+}
+
+/* ================= Reveal system =================
+   Elements opt in with data-reveal="…"; useReveal() adds data-in
+   once they scroll into view. --d staggers individual elements. */
+[data-reveal] {
+  --d: 0s;
+}
+
+[data-reveal="up"] {
+  opacity: 0;
+  transform: translateY(32px);
+  transition:
+    opacity 1s var(--ease-out) var(--d),
+    transform 1.2s var(--ease-out) var(--d);
+}
+
+[data-reveal="fade"] {
+  opacity: 0;
+  transition: opacity 1.4s var(--ease) var(--d);
+}
+
+[data-reveal="curtain"] {
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 1.4s var(--ease-out) var(--d);
+}
+
+[data-reveal="rule"] {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1.6s var(--ease-out) var(--d);
+}
+
+[dir="rtl"] [data-reveal="rule"] {
+  transform-origin: right;
+}
+
+[data-reveal][data-in] {
+  opacity: 1;
+  transform: none;
+}
+
+[data-reveal="curtain"][data-in] {
+  clip-path: inset(0 0 0 0);
+}
+
+/* ================= Stacked sections (see useStackedSections) =================
+   The hook writes each section's clip-path / transform per frame;
+   --dim darkens a section as the next one slides over it. */
+[data-stack]:not(:first-child) {
+  box-shadow: 0 -28px 60px -24px rgba(10, 6, 20, 0.6);
+}
+
+[data-stack]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  background: #120C1F;
+  opacity: var(--dim, 0);
+  pointer-events: none;
+}
+
+/* Word-by-word mask rise (see <Words />) */
+.w {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding: 0.14em 0.06em;
+  margin: -0.14em -0.06em;
+}
+
+.w > span {
+  display: inline-block;
+  transform: translateY(115%);
+  transition: transform 1.1s var(--ease-out);
+  transition-delay: calc(var(--d, 0s) + var(--i, 0) * 60ms);
+}
+
+[data-reveal][data-in] .w > span {
+  transform: none;
+}
+
+/* Phones: same language as desktop, just shorter travel and no per-frame work */
+html[data-motion="lite"] {
+  scroll-behavior: auto;
+}
+
+html[data-motion="lite"] body::after {
+  display: none;
+}
+
+html[data-motion="lite"] body {
+  text-rendering: optimizeSpeed;
+}
+
+html[data-motion="lite"] [data-reveal="up"] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.7s var(--ease-out) var(--d),
+    transform 0.8s var(--ease-out) var(--d);
+}
+
+html[data-motion="lite"] [data-reveal="fade"] {
+  opacity: 0;
+  transition: opacity 0.7s var(--ease) var(--d);
+}
+
+html[data-motion="lite"] [data-reveal="curtain"] {
+  clip-path: none;
+  opacity: 0;
+  transform: translateY(24px) scale(0.97);
+  transition:
+    opacity 0.7s var(--ease-out) var(--d),
+    transform 0.8s var(--ease-out) var(--d);
+}
+
+html[data-motion="lite"] [data-reveal="rule"] {
+  transform: scaleX(0);
+  transition: transform 0.7s var(--ease-out) var(--d);
+}
+
+html[data-motion="lite"] [data-reveal][data-in] {
+  opacity: 1;
+  transform: none;
+}
+
+html[data-motion="lite"] [data-reveal="curtain"][data-in] {
+  clip-path: none;
+}
+
+html[data-motion="lite"] .w > span {
+  transform: translateY(110%);
+  transition: transform 0.65s var(--ease-out);
+  transition-delay: calc(var(--d, 0s) + var(--i, 0) * 40ms);
+}
+
+html[data-motion="lite"] [data-reveal][data-in] .w > span {
+  transform: none;
+}
+
+html[data-motion="lite"] [data-stack]:not(:first-child) {
+  box-shadow: none;
+}
+
+html[data-motion="lite"] [data-stack]::after {
+  content: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+
+  .w > span {
+    transform: none !important;
+  }
 }

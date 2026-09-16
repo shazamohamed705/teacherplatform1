@@ -1,109 +1,66 @@
-import { useRef, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  FaCamera, FaBullhorn, FaPencilAlt, FaPalette
-} from 'react-icons/fa';
+import { PiCameraLight, PiMegaphoneLight, PiPenNibLight, PiPaletteLight } from 'react-icons/pi';
+import Eyebrow from '../ui/Eyebrow';
+import Words from '../ui/Words';
+import { useParallax } from '../../hooks/useScrollVar';
+import { countWords } from '../../lib/words';
 import styles from './Insight.module.css';
-
-function useInView(ref) {
-  const [inView, setInView] = useState(false);
-  const [key, setKey] = useState(0);
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) { setKey(k => k + 1); setInView(true); }
-        else setInView(false);
-      },
-      { threshold: 0.2 }
-    );
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, [ref]);
-  return { inView, key };
-}
 
 export default function Insight() {
   const { t } = useTranslation();
-  const sectionRef = useRef(null);
-  const { inView, key } = useInView(sectionRef);
+  const statementRef = useParallax(0.12);
 
   const skills = [
-    { icon: FaCamera,    label: t('insight.skill1'), color: '#a78bfa' },
-    { icon: FaBullhorn,  label: t('insight.skill2'), color: '#f26522' },
-    { icon: FaPencilAlt, label: t('insight.skill3'), color: '#f26522' },
-    { icon: FaPalette,   label: t('insight.skill4'), color: '#a78bfa' },
+    { icon: PiCameraLight,    label: t('insight.skill1') },
+    { icon: PiMegaphoneLight, label: t('insight.skill2') },
+    { icon: PiPenNibLight,    label: t('insight.skill3') },
+    { icon: PiPaletteLight,   label: t('insight.skill4') },
   ];
 
+  const l1 = t('insight.bigLine1');
+  const l2 = t('insight.bigLine2');
+
   return (
-    <section id="spark" className={styles.section} ref={sectionRef}>
+    <section id="spark" className={`${styles.section} theme-deep`}>
+      <div className={`container ${styles.grid}`}>
+        <div className={styles.copy}>
+          <Eyebrow num="02" data-reveal="up">{t('insight.eyebrow')}</Eyebrow>
 
-      {/* bg decoration */}
-      <div className={styles.bgGlow1} />
-      <div className={styles.bgGlow2} />
-      <div className={styles.bgGrid} />
+          <h2 className={`display ${styles.lead}`} data-reveal="words">
+            <Words text={t('insight.intro1')} />
+          </h2>
 
-      <div className={styles.container}>
+          <p className={styles.intro} data-reveal="up" style={{ '--d': '0.2s' }}>{t('insight.intro2')}</p>
 
-        {/* ---- LEFT ---- */}
-        <div className={styles.left}>
+          <ul className={styles.skills}>
+            {skills.map(({ icon: Icon, label }, i) => (
+              <li key={i} className={styles.skill} data-reveal="up" style={{ '--d': `${0.2 + i * 0.08}s` }}>
+                <span className={styles.skillNum}>0{i + 1}</span>
+                <span className={styles.skillName}>{label}</span>
+                <Icon className={styles.skillIcon} />
+              </li>
+            ))}
+          </ul>
 
-          <div className={`${styles.eyebrowWrap} ${inView ? styles.visible : ''}`}>
-            <span className={styles.eyebrow}>{t('insight.eyebrow')}</span>
-          </div>
-
-          <p className={`${styles.intro} ${inView ? styles.visible : ''}`}>
-            <strong>{t('insight.intro1')}</strong>
-            <br />
-            {t('insight.intro2')}
-          </p>
-
-          {/* Skill Pills */}
-          <div className={styles.skillsGrid}>
-            {skills.map((s, i) => {
-              const Icon = s.icon;
-              return (
-                <div
-                  key={i}
-                  className={`${styles.skillPill} ${inView ? styles.visible : ''}`}
-                  style={{
-                    '--pill-color': s.color,
-                    transitionDelay: `${0.3 + i * 0.1}s`,
-                    animationDelay:  `${0.3 + i * 0.1}s`,
-                  }}
-                >
-                  <Icon className={styles.pillIcon} />
-                  <span>{s.label}</span>
-                </div>
-              );
-            })}
-          </div>
-
-          <p className={`${styles.conclusion} ${inView ? styles.visible : ''}`}>
+          <p className={styles.conclusion} data-reveal="up">
             {t('insight.conclusion')}
-            <strong>{t('insight.medicine')}</strong>
+            <em>{t('insight.medicine')}</em>
           </p>
         </div>
 
-        {/* ---- RIGHT ---- */}
-        <div className={`${styles.right} ${inView ? styles.visible : ''}`}>
-
-          {/* Big glowing text */}
-          <div className={styles.bigText}>
-            <span className={styles.bigLine1}>The Sparking</span>
-            <span className={styles.bigLine2}>Insight</span>
-            <span className={styles.bigLine3}>Glows</span>
+        <div className={styles.statement} ref={statementRef}>
+          <div className={styles.flameWrap} data-reveal="fade" style={{ '--d': '0.2s' }} aria-hidden="true">
+            <img src="/Asset 25@4x.png" alt="" className={styles.flame} />
           </div>
-
-          {/* Bulb icon */}
-          <div className={`${styles.bulbWrap} ${inView ? styles.glow : ''}`}>
-            <div className={styles.bulbRing} />
-            <div className={styles.bulbRing2} />
-            <span className={styles.bulbEmoji}>💡</span>
-          </div>
-
+          <p className={`display ${styles.big}`} data-reveal="words" style={{ '--d': '0.1s' }}>
+            <span className={styles.bigSmall}><Words text={l1} /></span>
+            <em className={styles.bigLine}><Words text={l2} start={countWords(l1)} /></em>
+            <span className={styles.bigLine}>
+              <Words text={t('insight.bigLine3')} start={countWords(l1) + countWords(l2)} />
+            </span>
+          </p>
         </div>
       </div>
-
     </section>
   );
 }

@@ -1,175 +1,83 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FaTimesCircle, FaCheckCircle } from 'react-icons/fa';
+import Eyebrow from '../ui/Eyebrow';
+import Words from '../ui/Words';
+import { countWords } from '../../lib/words';
 import styles from './Gap.module.css';
 
-function useTypewriter(lines, inView, key) {
-  const [displayed, setDisplayed] = useState([]);
-  const [currentLine, setCurrentLine] = useState(0);
-  const [currentChar, setCurrentChar] = useState(0);
-  const [done, setDone] = useState(false);
-
-  // Store lines in a ref so changes to the array reference don't trigger the effect
-  const linesRef = useRef(lines);
-  useEffect(() => { linesRef.current = lines; }, [lines]);
-
-  // Reset whenever key changes (new inView cycle or language change)
-  useEffect(() => {
-    setDisplayed([]);
-    setCurrentLine(0);
-    setCurrentChar(0);
-    setDone(false);
-  }, [key]);
-
-  useEffect(() => {
-    if (!inView) {
-      setDisplayed([]);
-      setCurrentLine(0);
-      setCurrentChar(0);
-      setDone(false);
-      return;
-    }
-    if (done) return;
-    const lines = linesRef.current;
-    if (currentLine >= lines.length) { setDone(true); return; }
-    const line = lines[currentLine];
-    if (currentChar < line.length) {
-      const t = setTimeout(() => {
-        setDisplayed(prev => {
-          const next = [...prev];
-          next[currentLine] = (next[currentLine] || '') + line[currentChar];
-          return next;
-        });
-        setCurrentChar(c => c + 1);
-      }, 35);
-      return () => clearTimeout(t);
-    } else {
-      const t = setTimeout(() => { setCurrentLine(l => l + 1); setCurrentChar(0); }, 300);
-      return () => clearTimeout(t);
-    }
-  }, [inView, currentLine, currentChar, done, key]);
-
-  return displayed;
-}
-
-function useInView(ref) {
-  const [inView, setInView] = useState(false);
-  const [key, setKey] = useState(0);
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) { setKey(k => k + 1); setInView(true); }
-        else setInView(false);
-      },
-      { threshold: 0.25 }
-    );
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, [ref]);
-  return { inView, key };
+function Column({ variant, tag, title, desc, items, mark }) {
+  const isBad = variant === 'bad';
+  return (
+    <div className={`${styles.col} ${isBad ? styles.bad : styles.good}`}>
+      <div className={styles.colHead} data-reveal="up" style={{ '--d': isBad ? '0s' : '0.1s' }}>
+        <span className={styles.tag}>{tag}</span>
+        <h3 className={styles.colTitle}>{title}</h3>
+        <p className={styles.colDesc}>{desc}</p>
+      </div>
+      <ul>
+        {items.map((text, i) => (
+          <li key={i} className={styles.item} data-reveal="up" style={{ '--d': `${(isBad ? 0.1 : 0.2) + i * 0.1}s` }}>
+            <span className={styles.mark} aria-hidden="true">{mark}</span>
+            <span className={isBad ? styles.strike : undefined}>{text}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
 export default function Gap() {
-  const { t, i18n } = useTranslation();
-  const sectionRef = useRef(null);
-  const { inView, key } = useInView(sectionRef);
-
-  // useMemo prevents new array references on every render, which would
-  // cause the useTypewriter effect to re-run in an infinite loop.
-  const problemLines = useMemo(() => [
-    t('gap.prob1'), t('gap.prob2'), t('gap.prob3'), t('gap.prob4'),
-  ], [t]);
-  const solutionLines = useMemo(() => [
-    t('gap.sol1'), t('gap.sol2'), t('gap.sol3'), t('gap.sol4'),
-  ], [t]);
-
-  const problemDisplayed  = useTypewriter(problemLines,  inView, `${key}-${i18n.language}`);
-  const solutionDisplayed = useTypewriter(solutionLines, inView, `s-${key}-${i18n.language}`);
+  const { t } = useTranslation();
+  const title1 = t('gap.title1');
+  const problems = [1, 2, 3, 4].map((n) => t(`gap.prob${n}`));
+  const solutions = [1, 2, 3, 4].map((n) => t(`gap.sol${n}`));
 
   return (
-    <section id="about" className={styles.section} ref={sectionRef}>
+    <section id="about" className={`${styles.section} theme-cream`}>
+      <div className="container">
+        <header className={styles.head}>
+          <Eyebrow num="03" data-reveal="up">{t('gap.eyebrow')}</Eyebrow>
+          <h2 className={`display ${styles.title}`} data-reveal="words">
+            <Words text={title1} />
+            <em className={styles.marked}>
+              <Words text={t('gap.titleGap')} start={countWords(title1)} />
+              <svg className={styles.scribble} viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M4 17 C 46 7, 104 5, 196 12" pathLength="1" />
+              </svg>
+            </em>
+            <Words text={t('gap.title2')} start={countWords(title1) + 1} />
+          </h2>
+          <p className={styles.sub} data-reveal="up" style={{ '--d': '0.3s' }}>{t('gap.subtitle')}</p>
+        </header>
 
-      {/* Header */}
-      <div className={`${styles.header} ${inView ? styles.visible : ''}`}>
-        <span className={styles.eyebrow}>{t('gap.eyebrow')}</span>
-        <h2 className={styles.title}>
-          {t('gap.title1')}<span className={styles.titleOrange}>{t('gap.titleGap')}</span>{t('gap.title2')}
-        </h2>
-        <p className={styles.subtitle}>{t('gap.subtitle')}</p>
-      </div>
-
-      {/* Split Screen */}
-      <div className={`${styles.split} ${inView ? styles.visible : ''}`}>
-
-        {/* LEFT — Problem */}
-        <div className={styles.leftPane}>
-          <div className={styles.paneOverlay} />
-          <div className={styles.paneContent}>
-            <div className={styles.paneTag}>
-              <FaTimesCircle className={styles.tagIconBad} />
-              <span>{t('gap.probTag')}</span>
-            </div>
-            <h3 className={`${styles.paneTitle} ${styles.paneTitlePurple}`}>{t('gap.probTitle')}</h3>
-            <p className={styles.paneDesc}>{t('gap.probDesc')}</p>
-            <ul className={styles.twList} key={`prob-${key}-${i18n.language}`}>
-              {problemLines.map((line, i) => (
-                <li key={i} className={styles.twItem}>
-                  <FaTimesCircle className={styles.twIconBad} />
-                  <span>
-                    {problemDisplayed[i] || ''}
-                    {i === (problemDisplayed.length - 1) &&
-                     problemDisplayed[i] !== undefined &&
-                     problemDisplayed[i].length < line.length &&
-                      <span className={styles.cursor}>|</span>}
-                  </span>
-                </li>
-              ))}
-            </ul>
+        <div className={styles.ledger}>
+          <Column
+            variant="bad"
+            tag={t('gap.probTag')}
+            title={t('gap.probTitle')}
+            desc={t('gap.probDesc')}
+            items={problems}
+            mark="✕"
+          />
+          <div className={styles.vs} data-reveal="fade" style={{ '--d': '0.3s' }}>
+            <span>{t('gap.vs')}</span>
           </div>
+          <Column
+            variant="good"
+            tag={t('gap.solTag')}
+            title={t('gap.solTitle')}
+            desc={t('gap.solDesc')}
+            items={solutions}
+            mark="✓"
+          />
         </div>
 
-        {/* CENTER DIVIDER */}
-        <div className={styles.divider}>
-          <div className={`${styles.dividerLine} ${inView ? styles.grow : ''}`} />
-          <div className={styles.dividerBadge}>VS</div>
-          <div className={`${styles.dividerLine} ${inView ? styles.grow : ''}`} />
-        </div>
-
-        {/* RIGHT — Solution */}
-        <div className={styles.rightPane}>
-          <div className={styles.paneOverlay} />
-          <div className={styles.paneContent}>
-            <div className={styles.paneTag}>
-              <FaCheckCircle className={styles.tagIconGood} />
-              <span>{t('gap.solTag')}</span>
-            </div>
-            <h3 className={`${styles.paneTitle} ${styles.paneTitleOrange}`}>{t('gap.solTitle')}</h3>
-            <p className={styles.paneDesc}>{t('gap.solDesc')}</p>
-            <ul className={styles.twList} key={`sol-${key}-${i18n.language}`}>
-              {solutionLines.map((line, i) => (
-                <li key={i} className={styles.twItem}>
-                  <FaCheckCircle className={styles.twIconGood} />
-                  <span>
-                    {solutionDisplayed[i] || ''}
-                    {i === (solutionDisplayed.length - 1) &&
-                     solutionDisplayed[i] !== undefined &&
-                     solutionDisplayed[i].length < line.length &&
-                      <span className={styles.cursor}>|</span>}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
+        <blockquote className={styles.quote} data-reveal="up">
+          <span className={styles.qmark} aria-hidden="true">“</span>
+          <p className="display">
+            {t('gap.banner')}<em>{t('gap.bannerB1')}</em>{t('gap.bannerAnd')}<em>{t('gap.bannerB2')}</em>
+          </p>
+        </blockquote>
       </div>
-
-      {/* Bottom Banner */}
-      <div className={`${styles.banner} ${inView ? styles.visible : ''}`}>
-        <span className={styles.bannerText}>
-          {t('gap.banner')}<strong>{t('gap.bannerB1')}</strong>{t('gap.bannerAnd')}<strong>{t('gap.bannerB2')}</strong>
-        </span>
-      </div>
-
     </section>
   );
 }

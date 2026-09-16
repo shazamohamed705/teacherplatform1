@@ -7,8 +7,10 @@ export default {
     whyUs:     'Why Us',
     process:   'Process',
     work:      'Work',
+    doctors:   'Doctors',
     team:      'Team',
     getStarted:'Get Started',
+    menu:      'Menu',
   },
 
   // Hero
@@ -17,11 +19,11 @@ export default {
     greeting:   'Hello, We are',
     line1:      'WAHAJ',
     line2:      'Agency',
-    tag1:       '🎬 Medical Content',
-    tag2:       '📱 Social Media',
-    tag3:       '🩺 Med Students',
+    tag1:       'Medical Content',
+    tag2:       'Social Media',
+    tag3:       'Med Students',
     desc1:      'A team of medical students with years inside the field — and a real passion for media.',
-    desc2:      "We noticed a clear gap:",
+    desc2:      'We noticed a clear gap:',
     desc3:      "great doctors whose voices weren't reaching people the way they deserve.",
     stat1Num:   '50', stat1Suf: '+',  stat1Label: 'Doctors Served',
     stat2Num:   '300',stat2Suf: '+',  stat2Label: 'Pieces of Content',
@@ -29,14 +31,18 @@ export default {
     stat4Num:   '98', stat4Suf: '%',  stat4Label: 'Client Satisfaction',
     cta1:       'Work With Us',
     cta2:       'See Our Work',
-    scroll:     'Discover More',
-    imgLabel:   "Doctor's Photo",
+    scroll:     'Scroll',
+    imgLabel:   'WAHAJ Media flame mark',
+    seal:       'WAHAJ MEDIA · MEDICAL CONTENT · ',
     card1Num:   '4.9', card1Label: 'Client Rating',
     card2Num:   '50+', card2Label: 'Doctors Helped',
   },
 
-  // Typewriter words
-  typewriter: ['Media Platform','Content Creators','Your Voice','Your Brand','The Bridge'],
+  // Rotating words in the hero
+  typewriter: ['Media Platform', 'Content Creators', 'Your Voice', 'Your Brand', 'The Bridge'],
+
+  // Services ticker under the hero
+  marquee: ['Medical Content', 'Brand Strategy', 'Social Media', 'Creative Direction', 'Videography', 'Design'],
 
   // About
   about: {
@@ -90,6 +96,7 @@ export default {
     sol2:       'We build authentic medical brands',
     sol3:       'We deliver the message that matters',
     sol4:       'Real medical background — always accurate',
+    vs:         'vs.',
     banner:     'We are the bridge between ',
     bannerB1:   'medical expertise',
     bannerAnd:  ' and ',
@@ -126,25 +133,63 @@ export default {
     s4Desc: 'Finally, we turn words into visuals — Creative Direction, Content, Videography, and Design. All planned, nothing random.',
   },
 
-  // Team
-  team: {
-    eyebrow:  'Meet The Team',
-    title1:   'The People Who Make',
-    titleSpk: ' The Magic Happen',
-    subtitle: 'A specialized team of creatives working side by side to build your digital presence.',
-    members: [
-      { name: 'Ahmed Elgazar', role: 'Chief Executive Officer' },
-      { name: 'Atef Khalil',   role: 'Chief Creative Officer'  },
-      { name: 'Omar Nour',     role: 'Chief PR Officer'        },
-    ],
-  },
-
   // Portfolio
   portfolio: {
     eyebrow:  'Our Work',
     title1:   'Results That ',
     titleSpk: 'Speak.',
     subtitle: 'Real brands. Real doctors. Real impact.',
+    prev:     'Previous set',
+    next:     'Next set',
+  },
+
+  // Doctors
+  doctors: {
+    eyebrow:  'Our Doctors',
+    title1:   'Real Doctors. ',
+    titleSpk: 'Real Results.',
+    subtitle: 'Campaigns, reels and content we created for our doctors.',
+    reel:     'Reel',
+    promo:    'Promo',
+    campaign: 'Campaign',
+    spec: {
+      content: 'Medical Content Creator',
+      entF:    'ENT Specialist',
+    },
+  },
+
+  // Team
+  team: {
+    eyebrow:  'Meet The Team',
+    title1:   'The People Who Make',
+    titleSpk: ' The Magic Happen',
+    subtitle: 'A specialized team of creatives working side by side to build your digital presence.',
+    profile:  'Facebook',
+    viewProfile: 'Facebook Profile',
+    people: {
+      ahmed: { name: 'Ahmed Elgazar', role: 'Chief Executive Officer' },
+      omar:  { name: 'Omar Nour',     role: 'Chief Public Relations Officer' },
+      atef:  { name: 'Atef Khalil',   role: 'Chief Creative Officer' },
+    },
+  },
+
+  // Footer
+  footer: {
+    eyebrow:   'Start a Project',
+    ctaTitle1: "Let's build your ",
+    ctaTitle2: 'medical brand.',
+    cta:       'Get in Touch',
+    desc:      'We turn your medical expertise into digital content that reaches thousands of patients and builds real trust.',
+    quick:     'Quick Links',
+    contact:   'Contact',
+    rights:    'All rights reserved.',
+  },
+
+  // Contact modal
+  contact: {
+    eyebrow: 'Contact',
+    title:   "Let's talk.",
+    sub:     'Choose your preferred way to reach us.',
   },
 
   // Reel

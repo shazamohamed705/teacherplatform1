@@ -1,198 +1,164 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { openContact } from '../../lib/contact';
+import { NAV_DONE_EVENT } from '../../lib/navigation';
 import styles from './Navbar.module.css';
 
-const sectionIds = ['hero','story','about','why','process','portfolio','team'];
+const items = [
+  { key: 'home',     id: 'hero' },
+  { key: 'ourStory', id: 'story' },
+  { key: 'theGap',   id: 'about' },
+  { key: 'whyUs',    id: 'why' },
+  { key: 'process',  id: 'process' },
+  { key: 'work',     id: 'portfolio' },
+  { key: 'team',     id: 'team' },
+];
 
 export default function Navbar() {
   const { t, i18n } = useTranslation();
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [active,   setActive]   = useState('hero');
-  const [langOpen, setLangOpen] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [active, setActive] = useState('hero');
+  const progressRef = useRef(null);
   const isAr = i18n.language === 'ar';
-  const langRef = useRef(null);
 
-  const navItems = [
-    { label: t('nav.home'),      href: '#hero' },
-    { label: t('nav.ourStory'),  href: '#story' },
-    { label: t('nav.theGap'),    href: '#about' },
-    { label: t('nav.whyUs'),     href: '#why' },
-    { label: t('nav.process'),   href: '#process' },
-    { label: t('nav.work'),      href: '#portfolio' },
-    { label: t('nav.team'),      href: '#team' },
-  ];
-
+  // Background on scroll, hide while scrolling down, reading-progress hairline.
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  useEffect(() => {
-    const onClickOut = (e) => {
-      if (langRef.current && !langRef.current.contains(e.target)) {
-        setLangOpen(false);
+    let lastY = window.scrollY;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const y = window.scrollY;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      setScrolled(y > 24);
+      if (Math.abs(y - lastY) > 6) {
+        setHidden(document.documentElement.dataset.motion !== 'lite' && y > lastY && y > 520);
+        lastY = y;
       }
+      if (progressRef.current) {
+        progressRef.current.style.transform = `scaleX(${max > 0 ? y / max : 0})`;
+      }
+      // Sections are stacked, so the visible one is the last whose top has
+      // passed the middle of the viewport (earlier ones sit underneath).
+      let current = items[0].id;
+      for (const { id } of items) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= window.innerHeight * 0.5) current = id;
+      }
+      setActive(current);
     };
-    document.addEventListener('mousedown', onClickOut);
-    return () => document.removeEventListener('mousedown', onClickOut);
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    // After a curtain transition, show the bar even though we jumped downward
+    const onNavigated = () => {
+      lastY = window.scrollY;
+      setHidden(false);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    window.addEventListener(NAV_DONE_EVENT, onNavigated);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      window.removeEventListener(NAV_DONE_EVENT, onNavigated);
+      cancelAnimationFrame(raf);
+    };
   }, []);
 
   useEffect(() => {
-    const observers = [];
-    sectionIds.forEach(id => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const obs = new IntersectionObserver(
-        ([entry]) => { if (entry.isIntersecting) setActive(id); },
-        { threshold: 0.3 }
-      );
-      obs.observe(el);
-      observers.push(obs);
-    });
-    return () => observers.forEach(o => o.disconnect());
-  }, []);
+    if (!menuOpen) return;
+    const root = document.documentElement;
+    root.style.overflow = 'hidden';
+    const onKey = (e) => e.key === 'Escape' && setMenuOpen(false);
+    window.addEventListener('keydown', onKey);
+    return () => {
+      root.style.overflow = '';
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [menuOpen]);
 
-  const switchLang = (lang) => {
+  const switchLang = () => {
+    const lang = isAr ? 'en' : 'ar';
     i18n.changeLanguage(lang);
-    document.documentElement.dir  = lang === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
     document.documentElement.lang = lang;
-    setLangOpen(false);
   };
 
-  const handleLinkClick = () => setMenuOpen(false);
+  const navClass = [
+    styles.nav,
+    scrolled && styles.scrolled,
+    hidden && !menuOpen && styles.hidden,
+    menuOpen && styles.open,
+  ].filter(Boolean).join(' ');
 
   return (
     <>
-      <nav className={`${styles.navbar} ${scrolled ? styles.scrolled : ''}`}>
+      <header className={navClass}>
+        <div className={`container ${styles.inner}`}>
+          <a href="#hero" className={styles.brand} aria-label="WAHAJ MEDIA" onClick={() => setMenuOpen(false)}>
+            <img src="/Asset 25@4x.png" alt="" className={styles.mark} />
+            <span className={styles.wordmark} dir="ltr">
+              <b>WAHAJ</b>
+              <small>Media Production</small>
+            </span>
+          </a>
 
-        {/* Logo */}
-        <a href="#hero" className={styles.logo}>
-          <img
-            src="/Asset 25@4x.png"
-            alt="WAHAJ MEDIA"
-            className={styles.logoImg}
-          />
-        </a>
-
-        {/* Desktop Links */}
-        <div className={styles.navLinks}>
-          {navItems.map((item) => {
-            const id = item.href.replace('#', '');
-            return (
-              <a
-                key={item.href}
-                href={item.href}
-                className={`${styles.navLink} ${active === id ? styles.navLinkActive : ''}`}
-              >
-                {item.label}
+          <nav className={styles.links} aria-label="Main">
+            {items.map(({ key, id }) => (
+              <a key={id} href={`#${id}`} className={`${styles.link} ${active === id ? styles.active : ''}`}>
+                <span className={styles.roll} data-text={t(`nav.${key}`)}>
+                  <span>{t(`nav.${key}`)}</span>
+                </span>
               </a>
-            );
-          })}
-        </div>
+            ))}
+          </nav>
 
-        {/* Right side */}
-        <div className={styles.navRight}>
-          {/* Lang dropdown */}
-          <div ref={langRef} className={`${styles.langDropdown} ${langOpen ? styles.open : ''}`}>
-            <button
-              className={styles.langTrigger}
-              onClick={() => setLangOpen(o => !o)}
-              aria-label="Select language"
-            >
-              <span className={styles.langFlag}>{isAr ? '🇸🇦' : '🇬🇧'}</span>
-              {isAr ? 'العربية' : 'English'}
-              <span className={styles.langArrow}>▾</span>
+          <div className={styles.actions}>
+            <button type="button" className={styles.lang} onClick={switchLang} lang={isAr ? 'en' : 'ar'}>
+              {isAr ? 'EN' : 'عربي'}
             </button>
-
-            <div className={styles.langMenu}>
-              <button
-                className={`${styles.langOption} ${!isAr ? styles.langOptionActive : ''}`}
-                onClick={() => switchLang('en')}
-              >
-                <span>🇬🇧</span> English
-              </button>
-              <button
-                className={`${styles.langOption} ${isAr ? styles.langOptionActive : ''}`}
-                onClick={() => switchLang('ar')}
-              >
-                <span>🇸🇦</span> العربية
-              </button>
-            </div>
+            <button type="button" className={`btn btn--solid btn--sm ${styles.cta}`} onClick={openContact}>
+              {t('nav.getStarted')}
+            </button>
+            <button
+              type="button"
+              className={styles.burger}
+              onClick={() => setMenuOpen((o) => !o)}
+              aria-label={t('nav.menu')}
+              aria-expanded={menuOpen}
+            >
+              <span />
+              <span />
+            </button>
           </div>
+        </div>
+        <span ref={progressRef} className={styles.progress} />
+      </header>
 
-          {/* CTA */}
-          <button className={styles.ctaBtn} onClick={() => setShowModal(true)}>
+      <div className={styles.mobile} data-open={menuOpen}>
+        <nav className={styles.mLinks} aria-label="Mobile">
+          {items.map(({ key, id }, i) => (
+            <a key={id} href={`#${id}`} className={styles.mLink} style={{ '--i': i }} onClick={() => setMenuOpen(false)}>
+              <span className={styles.mInner}>
+                <span className={styles.mNum}>0{i + 1}</span>
+                {t(`nav.${key}`)}
+              </span>
+            </a>
+          ))}
+        </nav>
+        <div className={styles.mFoot}>
+          <button
+            type="button"
+            className="btn btn--solid"
+            onClick={() => { setMenuOpen(false); openContact(); }}
+          >
             {t('nav.getStarted')}
           </button>
         </div>
-
-        {/* Hamburger */}
-        <button
-          className={`${styles.hamburger} ${menuOpen ? styles.open : ''}`}
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Menu"
-        >
-          <span className={styles.bar}></span>
-          <span className={styles.bar}></span>
-          <span className={styles.bar}></span>
-        </button>
-      </nav>
-
-      {/* Mobile Menu */}
-      <div className={`${styles.mobileMenu} ${menuOpen ? styles.open : ''}`}>
-        {navItems.map((item) => (
-          <a
-            key={item.href}
-            href={item.href}
-            className={styles.mobileLink}
-            onClick={handleLinkClick}
-          >
-            {item.label}
-          </a>
-        ))}
-        <div className={styles.mobileLangRow}>
-          <button className={styles.mobileLangBtn} onClick={() => switchLang(isAr ? 'en' : 'ar')}>
-            {isAr ? '🇬🇧 Switch to English' : '🇸🇦 التبديل للعربية'}
-          </button>
-        </div>
-        <button className={styles.mobileCta} onClick={() => { handleLinkClick(); setShowModal(true); }}>
-          {t('nav.getStarted')}
-        </button>
       </div>
-
-      {/* Contact Modal */}
-      {showModal && (
-        <div className={styles.modalBackdrop} onClick={() => setShowModal(false)}>
-          <div className={styles.modal} onClick={e => e.stopPropagation()}>
-            <button className={styles.modalClose} onClick={() => setShowModal(false)}>✕</button>
-            <h3 className={styles.modalTitle}>تواصل معنا</h3>
-            <p className={styles.modalSub}>اختار طريقة التواصل المفضلة</p>
-            <div className={styles.modalBtns}>
-              <a
-                href="https://wa.me/201023313853"
-                target="_blank"
-                rel="noreferrer"
-                className={`${styles.modalBtn} ${styles.modalBtnWa}`}
-                onClick={() => setShowModal(false)}
-              >
-                <span>💬</span>
-                WhatsApp
-              </a>
-              <a
-                href="mailto:Wahaj.official.2025@gmail.com"
-                className={`${styles.modalBtn} ${styles.modalBtnGmail}`}
-                onClick={() => setShowModal(false)}
-              >
-                <span>✉️</span>
-                Gmail
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }

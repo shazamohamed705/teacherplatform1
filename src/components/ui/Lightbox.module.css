@@ -1,0 +1,107 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: grid;
+  place-items: center;
+  padding: clamp(64px, 6vw, 88px) clamp(16px, 8vw, 110px);
+  background: rgba(24, 18, 40, 0.95);
+  animation: backdropIn 0.4s var(--ease-out) both;
+}
+
+.closing {
+  animation: backdropOut 0.26s var(--ease) both;
+}
+
+@keyframes backdropIn  { from { opacity: 0; } }
+@keyframes backdropOut { to   { opacity: 0; } }
+
+.content {
+  position: relative;
+  max-width: min(1000px, 100%);
+  max-height: 100%;
+  animation: contentIn 0.7s var(--ease-out) both;
+}
+
+.closing .content {
+  animation: contentOut 0.26s var(--ease) both;
+}
+
+@keyframes contentIn {
+  from { opacity: 0; transform: translateY(28px) scale(0.98); }
+}
+@keyframes contentOut {
+  to { opacity: 0; transform: translateY(12px) scale(0.98); }
+}
+
+.content > img,
+.content > video {
+  display: block;
+  max-width: 100%;
+  max-height: 78vh;
+  margin-inline: auto;
+  object-fit: contain;
+  background: #0d0a13;
+}
+
+.close,
+.nav {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(241, 233, 220, 0.3);
+  border-radius: 50%;
+  color: var(--cream);
+  transition: transform 0.5s var(--ease-out), background-color 0.3s, border-color 0.3s;
+}
+
+.close {
+  top: 18px;
+  inset-inline-end: 18px;
+  width: 48px;
+  height: 48px;
+  font-size: 22px;
+}
+
+.close:hover {
+  transform: rotate(90deg);
+  background: var(--orange);
+  border-color: var(--orange);
+}
+
+.nav {
+  top: 50%;
+  width: 54px;
+  height: 54px;
+  margin-top: -27px;
+}
+
+.nav:hover {
+  background: var(--orange);
+  border-color: var(--orange);
+}
+
+.prev { left: clamp(10px, 2.5vw, 36px); }
+.next { right: clamp(10px, 2.5vw, 36px); }
+
+.counter {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--cream-muted);
+}
+
+@media (max-width: 640px) {
+  .nav {
+    top: auto;
+    bottom: 12px;
+    margin-top: 0;
+    width: 46px;
+    height: 46px;
+  }
+}

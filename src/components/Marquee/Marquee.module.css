@@ -1,0 +1,57 @@
+.band {
+  position: relative;
+  overflow: hidden;
+  padding-block: clamp(18px, 2.4vw, 28px);
+  background: var(--orange);
+  color: var(--purple-deep);
+}
+
+.track {
+  display: flex;
+  width: max-content;
+  animation: marquee 60s linear infinite;
+}
+
+.band:hover .track {
+  animation-play-state: paused;
+}
+
+.group {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-display);
+  font-size: clamp(24px, 3vw, 40px);
+  font-style: italic;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.item:nth-child(even) {
+  font-style: normal;
+}
+
+.star {
+  display: inline-block;
+  margin-inline: clamp(22px, 3vw, 44px);
+  font-size: 0.5em;
+  font-style: normal;
+  color: var(--cream);
+  animation: spin 8s linear infinite;
+}
+
+@keyframes marquee {
+  to { transform: translateX(-50%); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+:global(html[data-motion="lite"]) .star {
+  animation: none;
+}

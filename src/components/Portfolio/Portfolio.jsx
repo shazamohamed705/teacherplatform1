@@ -1,163 +1,121 @@
-import { useRef, useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FaInstagram, FaTiktok, FaYoutube, FaExpand } from 'react-icons/fa';
+import { PiInstagramLogoLight, PiTiktokLogoLight, PiYoutubeLogoLight } from 'react-icons/pi';
+import Eyebrow from '../ui/Eyebrow';
+import Words from '../ui/Words';
+import Arrow from '../ui/Arrow';
+import Lightbox from '../ui/Lightbox';
+import useInView from '../../hooks/useInView';
+import { portfolioItems, portfolioSets } from '../../data/portfolio';
+import { countWords } from '../../lib/words';
 import styles from './Portfolio.module.css';
 
-const allImages = [
-  { image: '/1B.png',          title: 'Brand Campaign',        tag: 'Branding',          platform: 'instagram' },
-  { image: '/2B.png',          title: 'Medical Content',       tag: 'Content Design',    platform: 'instagram' },
-  { image: '/3B.png',          title: 'Social Media Post',     tag: 'Social Media',      platform: 'instagram' },
-  { image: '/4A.png',          title: 'Video Production',      tag: 'Video',             platform: 'youtube'   },
-  { image: '/4B.png',          title: 'Doctor Brand',          tag: 'Branding',          platform: 'instagram' },
-  { image: '/5.png',           title: 'Creative Visual',       tag: 'Creative Direction',platform: 'tiktok'    },
-  { image: '/6_01.png',        title: 'Medical Series',        tag: 'Content Design',    platform: 'instagram' },
-  { image: '/6_02.png',        title: 'Brand Identity',        tag: 'Brand Identity',    platform: 'instagram' },
-  { image: '/6_03 (1).png',    title: 'Visual Design',         tag: 'Design',            platform: 'instagram' },
-  { image: '/6_03.png',        title: 'Social Campaign',       tag: 'Social Media',      platform: 'instagram' },
-  { image: '/6_04.png',        title: 'Medical Awareness',     tag: 'Content Design',    platform: 'youtube'   },
-  { image: '/6_05.png',        title: 'Clinic Branding',       tag: 'Branding',          platform: 'instagram' },
-  { image: '/6_06 (1).png',    title: 'Health Campaign',       tag: 'Social Media',      platform: 'tiktok'    },
-  { image: '/6_06.png',        title: 'Digital Marketing',     tag: 'Marketing',         platform: 'instagram' },
-  { image: '/7A_01.png',       title: 'Doctor Content',        tag: 'Video',             platform: 'youtube'   },
-  { image: '/7A_03.png',       title: 'Medical Reels',         tag: 'Video',             platform: 'tiktok'    },
-  { image: '/7A_05.png',       title: 'Health Education',      tag: 'Content Design',    platform: 'youtube'   },
-  { image: '/7B.png',          title: 'Video Series',          tag: 'Video Production',  platform: 'youtube'   },
-  { image: '/8A.png',          title: 'Personal Brand',        tag: 'Branding',          platform: 'instagram' },
-  { image: '/8B.png',          title: 'Creative Direction',    tag: 'Creative Direction',platform: 'tiktok'    },
-  { image: '/9A.png',          title: 'Medical Podcast',       tag: 'Content Design',    platform: 'youtube'   },
-  { image: '/9B.png',          title: 'Awareness Campaign',    tag: 'Social Media',      platform: 'instagram' },
-  { image: '/Carousel-2A_07.png',  title: 'Carousel Design',       tag: 'Design',            platform: 'instagram' },
-  { image: '/Carousel-2A_06.png',  title: 'Carousel Series',       tag: 'Design',            platform: 'instagram' },
-  { image: '/Carousel-2A_04.png',  title: 'Medical Carousel',      tag: 'Content Design',    platform: 'instagram' },
-  { image: '/Carousel-2A_01.png',  title: 'Brand Carousel',        tag: 'Branding',          platform: 'instagram' },
-  { image: '/Carousel-2A_03.png',  title: 'Creative Carousel',     tag: 'Creative Direction',platform: 'instagram' },
+const platformIcons = {
+  instagram: PiInstagramLogoLight,
+  youtube: PiYoutubeLogoLight,
+  tiktok: PiTiktokLogoLight,
+};
 
-];
-
-// Split into sets of 6
-const sizes = ['large','small','small','small','large','small'];
-const sets = [];
-for (let i = 0; i < allImages.length; i += 6) {
-  const chunk = allImages.slice(i, i + 6);
-  // pad if last chunk is incomplete — use a fixed offset so the index doesn't drift
-  let padIdx = 0;
-  while (chunk.length < 6) chunk.push(allImages[padIdx++]);
-  sets.push(chunk.map((img, j) => ({ ...img, id: i + j + 1, size: sizes[j] })));
-}
-
-const platformIcons = { instagram: FaInstagram, youtube: FaYoutube, tiktok: FaTiktok };
-
-function useInView(ref) {
-  const [inView, setInView] = useState(false);
-  const [key, setKey] = useState(0);
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) { setKey(k => k + 1); setInView(true); }
-        else setInView(false);
-      },
-      { threshold: 0.1 }
-    );
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, [ref]);
-  return { inView, key };
-}
+const pad = (n) => String(n).padStart(2, '0');
+const total = portfolioSets.length;
+const count = portfolioItems.length;
 
 export default function Portfolio() {
   const { t } = useTranslation();
-  const sectionRef = useRef(null);
-  const { inView, key } = useInView(sectionRef);
-  const [activeSet, setActiveSet] = useState(0);
-  const [fading, setFading] = useState(false);
-  const [lightbox, setLightbox] = useState(null);
+  const [sectionRef, inView] = useInView({ threshold: 0, once: false });
+  const [set, setSet] = useState(0);
+  const [hovering, setHovering] = useState(false);
+  const [open, setOpen] = useState(null); // index into portfolioItems
 
-  const works = sets[activeSet];
-
-  // auto cycle every 4s
-  useEffect(() => {
-    if (!inView) return;
-    const timer = setInterval(() => {
-      setFading(true);
-      setTimeout(() => {
-        setActiveSet(i => (i + 1) % sets.length);
-        setFading(false);
-      }, 400);
-    }, 4000);
-    return () => clearInterval(timer);
-  }, [inView, sets.length]);
+  const go = (step) => setSet((s) => (s + step + total) % total);
+  // Autoplay is driven by the progress bar's CSS animation: when it ends, advance.
+  const running = inView && !hovering && open === null;
+  const title1 = t('portfolio.title1');
+  const current = open !== null ? portfolioItems[open] : null;
 
   return (
-    <section id="portfolio" className={styles.section} ref={sectionRef}>
-
-      <div className={styles.bgBlob1} />
-      <div className={styles.bgBlob2} />
-
-      {/* Header */}
-      <div className={`${styles.header} ${inView ? styles.visible : ''}`}>
-        <span className={styles.eyebrow}>{t('portfolio.eyebrow')}</span>
-        <h2 className={styles.title}>
-          {t('portfolio.title1')}<span className={styles.titleOrange}>{t('portfolio.titleSpk')}</span>
-        </h2>
-        <p className={styles.subtitle}>{t('portfolio.subtitle')}</p>
-      </div>
-
-      {/* Grid */}
-      <div className={`${styles.grid} ${fading ? styles.fadeOut : styles.fadeIn}`} key={`grid-${key}`}>
-        {works.map((work, i) => {
-          const PlatformIcon = platformIcons[work.platform];
-          return (
-            <div
-              key={work.id}
-              className={`${styles.card} ${work.size === 'large' ? styles.cardLarge : ''}`}
-              style={{ animationDelay: `${i * 0.07}s` }}
-              onClick={() => setLightbox(work)}
-            >
-              <div className={styles.cardImg}>
-                {work.image && <img src={work.image} alt={work.title} loading="lazy" />}
-                <div className={styles.cardOverlay}>
-                  <div className={styles.overlayContent}>
-                    <div className={styles.expandBtn}><FaExpand /></div>
-                  </div>
-                </div>
-              </div>
-              <div className={styles.cardInfo}>
-                <div className={styles.cardMeta}>
-                  <span className={styles.cardTag}>{work.tag}</span>
-                  <PlatformIcon className={styles.platformIcon} />
-                </div>
-                <h3 className={styles.cardTitle}>{work.title}</h3>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Dots */}
-      <div className={`${styles.dots} ${inView ? styles.visible : ''}`}>
-        {sets.map((_, i) => (
-          <button
-            key={i}
-            className={`${styles.dot} ${i === activeSet ? styles.dotActive : ''}`}
-            onClick={() => setActiveSet(i)}
-          />
-        ))}
-      </div>
-
-      {/* Lightbox */}
-      {lightbox && (
-        <div className={styles.lightbox} onClick={() => setLightbox(null)}>
-          <div className={styles.lightboxInner} onClick={e => e.stopPropagation()}>
-            <button className={styles.lightboxClose} onClick={() => setLightbox(null)}>✕</button>
-            <img src={lightbox.image} alt={lightbox.title} />
-            <div className={styles.lightboxInfo}>
-              <span className={styles.cardTag}>{lightbox.tag}</span>
-              <h3>{lightbox.title}</h3>
-            </div>
+    <section id="portfolio" className={`${styles.section} theme-deep`} ref={sectionRef}>
+      <div className="container">
+        <header className={styles.head}>
+          <div>
+            <Eyebrow num="06" data-reveal="up">{t('portfolio.eyebrow')}</Eyebrow>
+            <h2 className={`display ${styles.title}`} data-reveal="words">
+              <Words text={title1} />
+              <em><Words text={t('portfolio.titleSpk')} start={countWords(title1)} /></em>
+            </h2>
           </div>
-        </div>
-      )}
 
+          <div className={styles.aside} data-reveal="up" style={{ '--d': '0.2s' }}>
+            <p className={styles.sub}>{t('portfolio.subtitle')}</p>
+            <div className={styles.pager}>
+              <button type="button" className={styles.pagerBtn} onClick={() => go(-1)} aria-label={t('portfolio.prev')}>
+                <Arrow dir="back" />
+              </button>
+              <span className={styles.count}>
+                <b>{pad(set + 1)}</b> / {pad(total)}
+              </span>
+              <button type="button" className={styles.pagerBtn} onClick={() => go(1)} aria-label={t('portfolio.next')}>
+                <Arrow dir="auto" />
+              </button>
+            </div>
+            <span className={styles.progress}>
+              <span
+                key={set}
+                className={styles.progressBar}
+                style={{ animationPlayState: running ? 'running' : 'paused' }}
+                onAnimationEnd={() => go(1)}
+              />
+            </span>
+          </div>
+        </header>
+
+        <div
+          className={styles.grid}
+          data-reveal="fade"
+          onMouseEnter={() => setHovering(true)}
+          onMouseLeave={() => setHovering(false)}
+        >
+          {portfolioSets[set].map((work, i) => {
+            const Icon = platformIcons[work.platform];
+            return (
+              <button
+                type="button"
+                key={`${set}-${work.id}`}
+                className={`${styles.card} ${work.size === 'large' ? styles.large : ''}`}
+                style={{ '--i': i }}
+                onClick={() => setOpen(work.index)}
+              >
+                <span className={styles.media}>
+                  <img src={work.image} alt={work.title} loading="lazy" />
+                </span>
+                <span className={styles.cap}>
+                  <span className={styles.capTitle}>{work.title}</span>
+                  <span className={styles.capTag}>
+                    {work.tag}
+                    <Icon />
+                  </span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {current && (
+        <Lightbox
+          label={current.title}
+          onClose={() => setOpen(null)}
+          onPrev={() => setOpen((i) => (i - 1 + count) % count)}
+          onNext={() => setOpen((i) => (i + 1) % count)}
+          counter={`${pad(open + 1)} / ${pad(count)}`}
+        >
+          <img key={current.image} src={current.image} alt={current.title} />
+          <p className={styles.lbCap}>
+            <span>{current.title}</span>
+            <span>{current.tag}</span>
+          </p>
+        </Lightbox>
+      )}
     </section>
   );
 }
